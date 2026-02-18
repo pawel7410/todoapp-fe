@@ -1,5 +1,15 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+interface Task {
+  id: number;
+  title: string;
+  description?: string;
+  isCompleted: boolean;
+}
+
+export type FilterType = 'all' | 'active' | 'completed';
 
 @Component({
   selector: 'app-root',
@@ -11,14 +21,28 @@ export class AppComponent implements OnInit {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/tasks';
 
-  tasks = signal<any[]>([]);
+  tasks = signal<Task[]>([]);
+
+  readonly filter = signal<FilterType>('all');
+
+  readonly filteredTasks = computed(() => {
+    const tasks = this.tasks();
+    const filter = this.filter();
+
+    if (filter === 'active') {
+      return tasks.filter((t) => !t.isCompleted);
+    } else if (filter === 'completed') {
+      return tasks.filter((t) => t.isCompleted);
+    }
+    return tasks;
+  });
 
   ngOnInit() {
     this.fetchTasks();
   }
 
   fetchTasks() {
-    this.http.get<any[]>(this.apiUrl).subscribe((data) => this.tasks.set(data));
+    this.http.get<Task[]>(this.apiUrl).subscribe((data) => this.tasks.set(data));
   }
 
   addTask(title: string) {
@@ -38,5 +62,15 @@ export class AppComponent implements OnInit {
       // Usuwamy zadanie z sygnału po udanym DELETE na backendzie
       this.tasks.update((currentTasks) => currentTasks.filter((t) => t.id !== id));
     });
+  }
+
+  updateStatus(task: Task) {
+    this.http
+      .patch<Task>(`${this.apiUrl}/${task.id}/status`, { isCompleted: !task.isCompleted })
+      .subscribe((updatedTask) => {
+        this.tasks.update((currentTasks) => {
+          return currentTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task));
+        });
+      });
   }
 }
