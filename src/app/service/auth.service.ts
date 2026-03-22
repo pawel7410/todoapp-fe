@@ -15,13 +15,13 @@ export class AuthService {
   private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'todo_token';
   private _token = signal<string | null>(this.getInitialToken());
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl + '/auth';
 
   isLoggedIn = computed(() => !!this._token());
   private router = inject(Router);
 
   login(email: string, pass: string) {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, pass }).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, pass }).pipe(
       tap((response) => {
         this.saveToken(response.access_token);
         this._token.set(response.access_token);
