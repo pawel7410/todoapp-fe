@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FilterType } from '../../app';
 import { AuthService } from '../../service/auth.service';
+import { environment } from '../../../environments/environment.development';
 
 interface Task {
   id: number;
@@ -19,7 +20,8 @@ interface Task {
 })
 export class TasksComponent implements OnInit {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/tasks';
+
+  private apiUrl = environment.apiUrl + '/tasks';
   private authService = inject(AuthService);
 
   tasks = signal<Task[]>([]);
