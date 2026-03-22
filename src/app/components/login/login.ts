@@ -40,4 +40,8 @@ export class LoginComponent {
       });
     }
   }
+
+  onRegisterClick() {
+    this.router.navigate(['/register']);
+  }
 }
