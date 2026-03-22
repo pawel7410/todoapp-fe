@@ -3,3 +3,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 1. Styl dla elementu, który aktualnie "leci" za myszką */
+.cdk-drag-preview {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  /* Ważne: usuń stąd wszelkie transition, preview nie powinien mieć animacji śledzenia */
+}
+
+/* 2. Styl dla "ducha" (miejsca, w które wskoczy zadanie) */
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  background: #e5e7eb; /* jasnoszary */
+  border: 2px dashed #9ca3af;
+}
+
+/* 3. Kluczowe: Animacja przesuwania się pozostałych elementów */
+.cdk-drag-animating {
+  /* Upewnij się, że masz jednostkę 'ms' lub 's' - to tu najczęściej wywala błąd toLowerCase() */
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1) !important;
+}
+
+/* 4. Animacja listy podczas przeciągania */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1) !important;
+}
