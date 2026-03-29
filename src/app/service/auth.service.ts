@@ -56,6 +56,16 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  deleteAccount() {
+    return this.http.delete(`${this.apiUrl}/account`).pipe(
+      tap(() => {
+        localStorage.removeItem(this.TOKEN_KEY);
+        this._token.set(null);
+        this.router.navigate(['/login']);
+      }),
+    );
+  }
+
   get token() {
     return this._token();
   }

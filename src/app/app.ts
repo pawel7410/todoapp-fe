@@ -18,4 +18,9 @@ export class AppComponent {
   public logout() {
     this.authService.logout();
   }
+
+  public deleteAccount() {
+    if (!confirm('Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.')) return;
+    this.authService.deleteAccount().subscribe();
+  }
 }
